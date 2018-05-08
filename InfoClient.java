@@ -3,7 +3,6 @@ import MessageMarshaller.*;
 import Registry.*;
 import Commons.Address;
 
-
 public class InfoClient {
     public static void main(String args[]) {
 		try {

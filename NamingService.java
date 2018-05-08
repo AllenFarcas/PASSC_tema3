@@ -6,6 +6,9 @@ import RequestReply.ByteStreamTransformer;
 import RequestReply.Replyer;
 import RequestReply.Requestor;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+
 class NamingServiceMessageServer extends MessageServer {
 	private int i=1112;
 	public Message get_answer(Message msg) throws Exception {
@@ -75,12 +78,30 @@ public class NamingService {
 		Message answer = m.unmarshal(bytes);
 		System.out.println("Registered object " + obj.getClass().getTypeName()+" with name "+name+" at "+answer.data);
 		//return Integer.parseInt(answer.data);
-		//Se creaza instanta lui serverside proxy
+		//se preia rezultatul
 		int portNumber = Integer.parseInt(answer.data);
-		InfoServerProxy proxy = new InfoServerProxy(portNumber);
+		//InfoServerProxy proxy = new InfoServerProxy(portNumber);
 		//si se invoca metoda de start a acestuia
-		proxy.dispatch();
-
+		//proxy.dispatch();
+		//Se creaza instanta lui serverside proxy prin reflexie
+		String objType = obj.getClass().getTypeName();
+		int aux = objType.indexOf("Impl");
+		String className =objType.substring(0,aux)+"ServerProxy";
+		try {
+			System.out.println("Class name = " + className);
+			Class<?> clazz = Class.forName(className);
+			Constructor<?> constructor = clazz.getDeclaredConstructor(int.class);
+			//getConstructor(String.class);
+			if (constructor==null) {
+				System.out.println("Null");
+			}
+			//System.out.println(constructor.toString());
+			ServerProxy proxy = (ServerProxy) constructor.newInstance(portNumber);
+			//System.out.println(proxy.toString());
+			proxy.dispatch();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	//returns the port number of the object the client searched for
@@ -93,10 +114,10 @@ public class NamingService {
 		bytes = req.deliver_and_wait_feedback(dest, bytes);
 		Message answer = m.unmarshal(bytes);
 		System.out.println("Object reference with name: " + name+" was found at port number: "+answer.data);
-		int retVal = Integer.parseInt(answer.data);
+		int portNumber = Integer.parseInt(answer.data);
 		//se returneaza o referinta (o instanta a lui client side proxy de fapt)
 		//la obiectul server care a fost inregistrat ca “MyInfoImpl”
-		InfoClientProxy proxy = new InfoClientProxy(retVal);
+		InfoClientProxy proxy = new InfoClientProxy(portNumber);
 		return proxy;
 	}
 

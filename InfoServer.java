@@ -46,9 +46,16 @@ class ServerTransformer implements ByteStreamTransformer {
 }
 
 class MessageServer {
-    public Message get_answer(Message msg) throws Exception{
+	private InfoImpl info;
+
+	public MessageServer() {}
+
+	public MessageServer(InfoImpl info) {
+		this.info = info;
+	}
+
+	public Message get_answer(Message msg) throws Exception{
     	if(msg.sender.equals("InfoClientProxy")) {
-			InfoImpl info = new InfoImpl();
 			System.out.println("InfoServerProxy analyzing data");
 			String [] arrOfStr = msg.data.split(":", 5);
 			String parameters = arrOfStr[0];
@@ -101,7 +108,11 @@ public class InfoServer {
     }
 }
 
-class InfoServerProxy {
+interface ServerProxy {
+	public void dispatch();
+}
+
+class InfoServerProxy implements ServerProxy{
 	private int portNumber;
 
 	public InfoServerProxy(int portNumber) {
@@ -111,8 +122,8 @@ class InfoServerProxy {
 	public void dispatch() {
 		Address myAddr = new Entry("127.0.0.1",portNumber);
 		Replyer rep = new Replyer("InfoServerProxy", myAddr);
-		//InfoImpl info = new InfoImpl();
-		ByteStreamTransformer transformer = new ServerTransformer(new MessageServer());
+		InfoImpl info = new InfoImpl();
+		ByteStreamTransformer transformer = new ServerTransformer(new MessageServer(info));
 		while(true) {
 			try {
 				rep.receive_transform_and_send_feedback(transformer);
