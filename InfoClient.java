@@ -23,7 +23,7 @@ interface ClientProxy {
 
 }
 class InfoClientProxy implements Info, ClientProxy {
-	Requestor req = new Requestor("InfoServerProxy");
+	Requestor req = new Requestor("InfoClientProxy");
 	Marshaller m = new Marshaller();
 	int portNumber;
 
