@@ -18,7 +18,11 @@ public class InfoClient {
 
 }
 
-class InfoClientProxy implements Info {
+
+interface ClientProxy {
+
+}
+class InfoClientProxy implements Info, ClientProxy {
 	Requestor req = new Requestor("InfoServerProxy");
 	Marshaller m = new Marshaller();
 	int portNumber;

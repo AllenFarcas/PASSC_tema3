@@ -25,7 +25,6 @@ class NamingServiceMessageServer extends MessageServer {
 			Address addr = Registry.instance().get(msg.data);
 			if(addr == null) {
 				System.out.println("Naming service couldn't put " + theDestName + " in the database.");
-				//answer = new Message("Naming service", "Error putting data in database ");
 				throw new Exception("Error putting the data in the database.");
 			} else {
 				System.out.println("Naming service registered the object " + theDestObject +
@@ -37,12 +36,10 @@ class NamingServiceMessageServer extends MessageServer {
 			Address addr = Registry.instance().get(msg.data);
 			if(addr == null) {
 				System.out.println("Naming service didn't find " + msg.data + " in database.");
-				//answer = new Message("Naming service", "Error finding data in database ");
 				throw new Exception("Error finding data in database");
 			} else {
 				System.out.println("Naming service found " + msg.data + " in database.");
 				answer = new Message("Naming service", String.valueOf(addr.port()));
-				//answer = new Message("Addr.dest = "+addr.dest() + " addr.")
 			}
 		}
 		return answer;
@@ -105,7 +102,7 @@ public class NamingService {
 	}
 
 	//returns the port number of the object the client searched for
-	public static Object getObjectReference(String name){
+	public static Object getObjectReference(String name) throws Exception{
 		Message msg = new Message("Client",name);
 		Requestor req = new Requestor("Client");
 		Marshaller m = new Marshaller();
@@ -117,7 +114,21 @@ public class NamingService {
 		int portNumber = Integer.parseInt(answer.data);
 		//se returneaza o referinta (o instanta a lui client side proxy de fapt)
 		//la obiectul server care a fost inregistrat ca “MyInfoImpl”
-		InfoClientProxy proxy = new InfoClientProxy(portNumber);
+		//InfoClientProxy proxy = new InfoClientProxy(portNumber);
+		//return proxy;
+		String [] arrOfStr = msg.data.split(":", 5);
+		String theDestObject = arrOfStr[1];
+		int aux = theDestObject.indexOf("Impl");
+		String className = theDestObject.substring(0,aux)+"ClientProxy";
+		System.out.println("Class name = " + className);
+		Class<?> clazz = Class.forName(className);
+		Constructor<?> constructor = clazz.getDeclaredConstructor(int.class);
+		//getConstructor(String.class);
+		if (constructor==null) {
+			System.out.println("Null");
+		}
+		//System.out.println(constructor.toString());
+		ClientProxy proxy = (ClientProxy) constructor.newInstance(portNumber);
 		return proxy;
 	}
 
