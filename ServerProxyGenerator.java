@@ -18,7 +18,6 @@ public class ServerProxyGenerator {
     public void generateAndCompile(){
         try {
             Class<?> reflectClass = Class.forName(interfaceName);
-            System.out.println("Numele interfetei este: "+interfaceName);
             CharSequence str = "String";
             File file= new File ("/Users/allenpianoman/Desktop/PASSC/Tema3/Tema3PASSC/src/"+className+".java");
             file.createNewFile();
@@ -38,20 +37,16 @@ public class ServerProxyGenerator {
             printWriter.println("\t\tif(msg.sender.equals(\""+interfaceName+"ClientProxy\")) {");
             printWriter.println("\t\t\tSystem.out.println(\""+interfaceName+"ServerProxy analyzing data\");");
             printWriter.println("\t\t\tString [] arrOfStr = msg.data.split(\":\", 5);\n\t\t\tString parameters = arrOfStr[0];");
-            printWriter.println("\t\t\tString opcode = arrOfStr[1];\n\t\t\tint opnum = Integer.parseInt(opcode);");
-            printWriter.println("\t\t\tString [] arrParam = parameters.split(\" \", 5);\n\t\t\tswitch (opnum){");
+            printWriter.println("\t\t\tString opcode = arrOfStr[1];");
+            printWriter.println("\t\t\tString [] arrParam = parameters.split(\" \", 5);\n\t\t\tswitch (opcode){");
             //// Get the objects methods, return type and parameter type
             Method[] classMethods = reflectClass.getDeclaredMethods();
-            int i=0;
-            //System.out.println("\n===========================\n");
             for(Method method : classMethods) {
                 // Get the method name
                 String methodName = method.getName();
-                System.out.println("Metoda numarul "+i+" este: "+methodName);
-                printWriter.println("\t\t\t\t//"+methodName+" "+i+"\n\t\t\t\tcase "+i+": {");
-                printWriter.println("\t\t\t\t\tSystem.out.println(\""+interfaceName+"ServerProxy: "+methodName+" method\");");
+                printWriter.println("\n\t\t\t\tcase \""+methodName+"\": {");
+                printWriter.println("\t\t\t\t\tSystem.out.println(\""+interfaceName+"ServerProxy: "+methodName+" method is executing...\");");
                 // Get the methods return type
-                //System.out.println("Method return type: " + method.getReturnType());
                 String methodReturnType = method.getReturnType().getTypeName();
                 printWriter.println("\t\t\t\t\t"+methodReturnType+" $result;");
                 Class<?>[] parameterType = method.getParameterTypes();
@@ -100,7 +95,7 @@ public class ServerProxyGenerator {
                 }
                 printWriter.println("\t\t\t\t\t$result = "+interfaceName.toLowerCase()+"."+methodName+"("+methodArgs+");");
                 if(methodReturnType.contains(str)){
-                    printWriter.println("\t\t\t\t\tSystem.out.println(\""+interfaceName+"ServerProxy: result is \" + $result);");
+                    printWriter.println("\t\t\t\t\tSystem.out.println(\""+interfaceName+"ServerProxy: The result is \" + $result\n\n);");
                     printWriter.println("\t\t\t\t\tMessage answer = new Message(\""+interfaceName+"ServerProxy\", $result);");
                 } else {
                     printWriter.println("\t\t\t\t\tString dataResult = String.valueOf($result);");
@@ -108,7 +103,6 @@ public class ServerProxyGenerator {
                     printWriter.println("\t\t\t\t\tMessage answer = new Message(\""+interfaceName+"ServerProxy\", dataResult);");
                 }
                 printWriter.println("\t\t\t\t\treturn answer;\n\t\t\t\t}");
-                i++;
             }
             printWriter.println("\t\t\t}\n\t\t} else {");
             printWriter.println("\t\t\tSystem.out.println(\""+interfaceName+"ServerProxy Error: Somebody else is trying " +

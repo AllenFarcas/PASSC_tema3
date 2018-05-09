@@ -18,7 +18,6 @@ public class ClientProxyGenerator {
     public void generateAndCompile(){
         try {
             Class<?> reflectClass = Class.forName(interfaceName);
-            System.out.println("Numele interfetei este: "+interfaceName);
             CharSequence str = "String";
             File file= new File ("/Users/allenpianoman/Desktop/PASSC/Tema3/Tema3PASSC/src/"+className+".java");
             file.createNewFile();
@@ -34,11 +33,9 @@ public class ClientProxyGenerator {
             printWriter.println("\t\tthis.portNumber = portNumber;\n\t}\n");
             //// Get the objects methods, return type and parameter type
             Method[] classMethods = reflectClass.getDeclaredMethods();
-            int i=0;
             for(Method method : classMethods) {
                 // Get the method name
                 String methodName = method.getName();
-                System.out.println("Metoda numarul "+i+" este: "+methodName);
                 // Get the methods return type
                 String methodReturnType = method.getReturnType().getTypeName();
                 printWriter.print("\tpublic " + methodReturnType + " " + methodName + "(");
@@ -63,7 +60,7 @@ public class ClientProxyGenerator {
                 }
                 printWriter.println(methodArgs+") {");
                 if (parameterType.length == 0) {
-                    printWriter.println("\t\tString msgData = \" :" + i + "\";");
+                    printWriter.println("\t\tString msgData = \" :" + methodName + "\";");
                 } else {
                     int parCount = 0;
                     printWriter.print("\t\tString msgData = ");
@@ -84,7 +81,7 @@ public class ClientProxyGenerator {
                         }
                         parCount++;
                     }
-                    printWriter.print("+\":" + i + "\";");
+                    printWriter.print("+\":" + methodName + "\";");
                 }
                 printWriter.println("\n\t\t//scrie in mesaj toti parametri");
                 printWriter.println("\t\tMessage msg = new Message(\"" + interfaceName + "ClientProxy\",msgData);");
@@ -117,7 +114,6 @@ public class ClientProxyGenerator {
                     }
                 }
                 printWriter.println("\t\treturn $result;\n\t}");
-                i++;
             }
             printWriter.println("}");
             printWriter.close();
