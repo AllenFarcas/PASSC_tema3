@@ -2,12 +2,8 @@ import Commons.Address;
 import MessageMarshaller.Marshaller;
 import MessageMarshaller.Message;
 import Registry.*;
-import RequestReply.ByteStreamTransformer;
-import RequestReply.Replyer;
-import RequestReply.Requestor;
-
+import RequestReply.*;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 
 class NamingServiceMessageServer extends MessageServer {
 	private int i=1112;
@@ -74,27 +70,23 @@ public class NamingService {
 		bytes = req.deliver_and_wait_feedback(dest, bytes);
 		Message answer = m.unmarshal(bytes);
 		System.out.println("Registered object " + obj.getClass().getTypeName()+" with name "+name+" at "+answer.data);
-		//return Integer.parseInt(answer.data);
 		//se preia rezultatul
 		int portNumber = Integer.parseInt(answer.data);
-		//InfoServerProxy proxy = new InfoServerProxy(portNumber);
 		//si se invoca metoda de start a acestuia
-		//proxy.dispatch();
 		//Se creaza instanta lui serverside proxy prin reflexie
 		String objType = obj.getClass().getTypeName();
 		int aux = objType.indexOf("Impl");
-		String className =objType.substring(0,aux)+"ServerProxy";
+		String interfaceName = objType.substring(0,aux);
+		String className = interfaceName+"ServerProxy";
 		try {
-			System.out.println("Class name = " + className);
+			ServerProxyGenerator generator = new ServerProxyGenerator(className,interfaceName);
+			generator.generateAndCompile();
 			Class<?> clazz = Class.forName(className);
 			Constructor<?> constructor = clazz.getDeclaredConstructor(int.class);
-			//getConstructor(String.class);
 			if (constructor==null) {
 				System.out.println("Null");
 			}
-			//System.out.println(constructor.toString());
 			ServerProxy proxy = (ServerProxy) constructor.newInstance(portNumber);
-			//System.out.println(proxy.toString());
 			proxy.dispatch();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -113,22 +105,26 @@ public class NamingService {
 		System.out.println("Object reference with name: " + name+" was found at port number: "+answer.data);
 		int portNumber = Integer.parseInt(answer.data);
 		//se returneaza o referinta (o instanta a lui client side proxy de fapt)
-		//la obiectul server care a fost inregistrat ca “MyInfoImpl”
-		//InfoClientProxy proxy = new InfoClientProxy(portNumber);
-		//return proxy;
+		//la obiectul server care a fost inregistrat
 		String [] arrOfStr = msg.data.split(":", 5);
 		String theDestObject = arrOfStr[1];
 		int aux = theDestObject.indexOf("Impl");
-		String className = theDestObject.substring(0,aux)+"ClientProxy";
-		System.out.println("Class name = " + className);
-		Class<?> clazz = Class.forName(className);
-		Constructor<?> constructor = clazz.getDeclaredConstructor(int.class);
-		//getConstructor(String.class);
-		if (constructor==null) {
-			System.out.println("Null");
+		String interfaceName = theDestObject.substring(0,aux);
+		String className = interfaceName+"ClientProxy";
+		ClientProxy proxy=null;
+		try {
+			ClientProxyGenerator generator = new ClientProxyGenerator(className,interfaceName);
+			generator.generateAndCompile();
+
+			Class<?> clazz = Class.forName(className);
+			Constructor<?> constructor = clazz.getDeclaredConstructor(int.class);
+			if (constructor==null) {
+				System.out.println("Null");
+			}
+			proxy = (ClientProxy) constructor.newInstance(portNumber);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		//System.out.println(constructor.toString());
-		ClientProxy proxy = (ClientProxy) constructor.newInstance(portNumber);
 		return proxy;
 	}
 
