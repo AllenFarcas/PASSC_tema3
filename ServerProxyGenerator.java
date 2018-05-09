@@ -9,10 +9,12 @@ import java.util.Arrays;
 public class ServerProxyGenerator {
     private String className;
     private String interfaceName;
+    private String name;
 
-    public ServerProxyGenerator(String className, String interfaceName) {
+    public ServerProxyGenerator(String className, String interfaceName, String name) {
         this.className = className;
         this.interfaceName = interfaceName;
+        this.name = name;
     }
 
     public void generateAndCompile(){
@@ -23,8 +25,8 @@ public class ServerProxyGenerator {
             file.createNewFile();
             FileWriter fileWriter = new FileWriter(file);
             PrintWriter printWriter = new PrintWriter(fileWriter);
-            printWriter.println("import MessageMarshaller.Message;\nimport Commons.Address;\nimport Registry.Entry;\n" +
-                    "import RequestReply.ByteStreamTransformer;\nimport RequestReply.Replyer;\n");
+            printWriter.println("import MessageMarshaller.*;\nimport Commons.Address;\nimport Registry.Entry;\n" +
+                    "import RequestReply.*;\n");
 
 
             //==================MESSAGE SERVER=====================
@@ -95,11 +97,11 @@ public class ServerProxyGenerator {
                 }
                 printWriter.println("\t\t\t\t\t$result = "+interfaceName.toLowerCase()+"."+methodName+"("+methodArgs+");");
                 if(methodReturnType.contains(str)){
-                    printWriter.println("\t\t\t\t\tSystem.out.println(\""+interfaceName+"ServerProxy: The result is \" + $result\n\n);");
+                    printWriter.println("\t\t\t\t\tSystem.out.println(\""+interfaceName+"ServerProxy: The result is \" + $result+\"\\n\\n\");");
                     printWriter.println("\t\t\t\t\tMessage answer = new Message(\""+interfaceName+"ServerProxy\", $result);");
                 } else {
                     printWriter.println("\t\t\t\t\tString dataResult = String.valueOf($result);");
-                    printWriter.println("\t\t\t\t\tSystem.out.println(\""+interfaceName+"ServerProxy: result is \" + dataResult);");
+                    printWriter.println("\t\t\t\t\tSystem.out.println(\""+interfaceName+"ServerProxy: result is \" + dataResult+\"\\n\\n\");");
                     printWriter.println("\t\t\t\t\tMessage answer = new Message(\""+interfaceName+"ServerProxy\", dataResult);");
                 }
                 printWriter.println("\t\t\t\t\treturn answer;\n\t\t\t\t}");
@@ -119,8 +121,21 @@ public class ServerProxyGenerator {
             printWriter.println("\t\t"+interfaceName+"Impl "+interfaceName.toLowerCase()+" = new "+interfaceName+"Impl();");
             printWriter.println("\t\tByteStreamTransformer transformer = new ServerTransformer(new "+interfaceName+
                     "MessageServer("+interfaceName.toLowerCase()+"));");
-            printWriter.println("\t\twhile(true) {\n\t\t\ttry {\n\t\t\t\trep.receive_transform_and_send_feedback(transformer);");
-            printWriter.println("\t\t\t} catch (Exception e) {\n\t\t\t\tSystem.out.println(e.getMessage());\n\t\t\t}\n\t\t}\n\t}\n}");
+            printWriter.println("\t\twhile(true) {\n\t\t\ttry {");
+            printWriter.println("\t\t\t\tMessage msg = new Message(\"Client\",\""+name+"!Check\");\n" +
+                    "\t\t\t\tRequestor req = new Requestor(\"Client\");\n" +
+                    "\t\t\t\tMarshaller m = new Marshaller();\n" +
+                    "\t\t\t\tbyte[] bytes = m.marshal(msg);\n" +
+                    "\t\t\t\tAddress dest = new Entry(\"127.0.0.1\",1110);\n" +
+                    "\t\t\t\tbytes = req.deliver_and_wait_feedback(dest, bytes);\n" +
+                    "\t\t\t\tMessage answer = m.unmarshal(bytes);\n" +
+                    "\t\t\t\tif(Boolean.valueOf(answer.data)) {\n" +
+                    "                    rep.receive_transform_and_send_feedback(transformer);\n" +
+                    "\t\t\t\t} else {\n" +
+                    "\t\t\t\t\tSystem.out.println(\"Serverul se opreste\");\n" +
+                    "\t\t\t\t\tbreak;\n" +
+                    "\t\t\t\t}");
+            printWriter.println("\t\t\t} catch (Exception e) {\n\t\t\t\t//System.out.println(e.getMessage());\n\t\t\t}\n\t\t}\n\t}\n}");
             printWriter.close();
 
             JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();

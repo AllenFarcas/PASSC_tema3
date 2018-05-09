@@ -4,10 +4,10 @@ public class MateClient {
             Mate myMate = (Mate) NamingService.getObjectReference("MyMateImpl:MateImpl");
             double retValD = myMate.do_sqr(4);
             System.out.println("Returned value is: "+retValD);
-            float retValF = myMate.do_add(2,10);
+            /*float retValF = myMate.do_add(2,10);
             System.out.println("Returned value is: "+retValF);
             int retValInt = myMate.do_diff(5,1);
-            System.out.println("Returned value is: "+retValInt);
+            System.out.println("Returned value is: "+retValInt);*/
         } catch (Exception e){
             System.out.println(e.getMessage());
         }

@@ -4,9 +4,10 @@ public class InfoClient {
 			Info myInfo = (Info) NamingService.getObjectReference("MyInfoImpl:InfoImpl");
 			int retVal = myInfo.get_temp("Timisoara");
 			System.out.println("Returned value is: "+retVal);
-			String retValS = myInfo.get_road_info(2);
-			System.out.println("Returned value is: "+retValS);
+			//String retValS = myInfo.get_road_info(2);
+			//System.out.println("Returned value is: "+retValS);
 		} catch (Exception e){
+			e.printStackTrace();
 			System.out.println(e.getMessage());
 		}
     }

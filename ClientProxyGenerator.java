@@ -9,13 +9,15 @@ import java.util.Arrays;
 public class ClientProxyGenerator {
     private String className;
     private String interfaceName;
+    private String name;
 
-    public ClientProxyGenerator(String className, String interfaceName) {
+    public ClientProxyGenerator(String className, String interfaceName, String name) {
         this.className = className;
         this.interfaceName = interfaceName;
+        this.name=name;
     }
 
-    public void generateAndCompile(){
+    public void generateAndCompile() {
         try {
             Class<?> reflectClass = Class.forName(interfaceName);
             CharSequence str = "String";
@@ -113,9 +115,25 @@ public class ClientProxyGenerator {
                         }
                     }
                 }
-                printWriter.println("\t\treturn $result;\n\t}");
+                printWriter.println("\t\tsendStopMessage();");
+                printWriter.println("\t\treturn $result;\n\t}\n");
             }
-            printWriter.println("}");
+            printWriter.println("\tpublic void sendStopMessage() {\n" +
+                    "        Message msg = new Message(\"Client\", \""+name+"!TurnOff\");\n" +
+                    "        Requestor req = new Requestor(\"Client\");\n" +
+                    "        Marshaller m = new Marshaller();\n" +
+                    "        byte[] bytes = m.marshal(msg);\n" +
+                    "        Address dest = new Entry(\"127.0.0.1\", 1110);\n" +
+                    "        bytes = req.deliver_and_wait_feedback(dest, bytes);\n" +
+                    "        Message answer = m.unmarshal(bytes);\n" +
+                    "\n" +
+                    "        if (Boolean.valueOf(answer.data)) {\n" +
+                    "            System.out.println(\"Server still on\");\n" +
+                    "        } else {\n" +
+                    "            System.out.println(\"Server is off.\");\n" +
+                    "        }\n" +
+                    "    }\n" +
+                    "}");
             printWriter.close();
             //==================Compiling the file =====================
             JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
