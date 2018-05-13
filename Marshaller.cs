@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Text;
-
 namespace CevaTema.MessageMarshaller {
     public class Marshaller {
         public static byte[] Marshal(Message theMsg) {

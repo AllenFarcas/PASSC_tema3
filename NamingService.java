@@ -100,7 +100,6 @@ public class NamingService {
 			answer = m.unmarshal(bytes);
 			System.out.println("Registered object " + obj.getClass().getTypeName()+" with name "+name+" at "+answer.data);
 			//se preia rezultatul
-			//int portNumber = Integer.parseInt(answer.data);
 		}
 		System.out.println(ans);
 	}

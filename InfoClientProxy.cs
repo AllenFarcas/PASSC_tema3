@@ -12,7 +12,6 @@ namespace CevaTema {
         public InfoClientProxy(int portNumber) {
             _portNumber = portNumber;
         }
-        
         public int get_temp(string param0) {
             var msgData = param0+":get_temp";
             //scrie in mesaj toti parametri

@@ -13,5 +13,4 @@ public class MateClient {
             System.out.println(e.getMessage());
         }
     }
-
 }

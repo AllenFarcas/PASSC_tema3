@@ -10,7 +10,6 @@ namespace CevaTema {
 	    private const string Address = "127.0.0.1";
 	    private const int PortNo = 1111;
 	    private const int ActivatorPort = 1110;
-	    
         public static void Main() {
 	        try {
 		        const string name = "MyInfoImpl:InfoImpl";
