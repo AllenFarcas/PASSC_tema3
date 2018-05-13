@@ -115,25 +115,9 @@ public class ClientProxyGenerator {
                         }
                     }
                 }
-                printWriter.println("\t\tsendStopMessage();");
                 printWriter.println("\t\treturn $result;\n\t}\n");
             }
-            printWriter.println("\tpublic void sendStopMessage() {\n" +
-                    "        Message msg = new Message(\"Client\", \""+name+"!TurnOff\");\n" +
-                    "        Requestor req = new Requestor(\"Client\");\n" +
-                    "        Marshaller m = new Marshaller();\n" +
-                    "        byte[] bytes = m.marshal(msg);\n" +
-                    "        Address dest = new Entry(\"127.0.0.1\", 1110);\n" +
-                    "        bytes = req.deliver_and_wait_feedback(dest, bytes);\n" +
-                    "        Message answer = m.unmarshal(bytes);\n" +
-                    "\n" +
-                    "        if (Boolean.valueOf(answer.data)) {\n" +
-                    "            System.out.println(\"Server still on\");\n" +
-                    "        } else {\n" +
-                    "            System.out.println(\"Server is off.\");\n" +
-                    "        }\n" +
-                    "    }\n" +
-                    "}");
+            printWriter.println("}");
             printWriter.close();
             //==================Compiling the file =====================
             JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();

@@ -18,18 +18,6 @@ class MateMessageServer extends MessageServer {
 			String [] arrParam = parameters.split(" ", 5);
 			switch (opcode){
 
-				case "do_diff": {
-					System.out.println("MateServerProxy: do_diff method is executing...");
-					int $result;
-					int $param_0 = Integer.valueOf(arrParam[0]);
-					int $param_1 = Integer.valueOf(arrParam[1]);
-					$result = mate.do_diff( $param_0, $param_1);
-					String dataResult = String.valueOf($result);
-					System.out.println("MateServerProxy: result is " + dataResult+"\n\n");
-					Message answer = new Message("MateServerProxy", dataResult);
-					return answer;
-				}
-
 				case "do_sqr": {
 					System.out.println("MateServerProxy: do_sqr method is executing...");
 					double $result;
@@ -47,6 +35,18 @@ class MateMessageServer extends MessageServer {
 					float $param_0 = Float.valueOf(arrParam[0]);
 					float $param_1 = Float.valueOf(arrParam[1]);
 					$result = mate.do_add( $param_0, $param_1);
+					String dataResult = String.valueOf($result);
+					System.out.println("MateServerProxy: result is " + dataResult+"\n\n");
+					Message answer = new Message("MateServerProxy", dataResult);
+					return answer;
+				}
+
+				case "do_diff": {
+					System.out.println("MateServerProxy: do_diff method is executing...");
+					int $result;
+					int $param_0 = Integer.valueOf(arrParam[0]);
+					int $param_1 = Integer.valueOf(arrParam[1]);
+					$result = mate.do_diff( $param_0, $param_1);
 					String dataResult = String.valueOf($result);
 					System.out.println("MateServerProxy: result is " + dataResult+"\n\n");
 					Message answer = new Message("MateServerProxy", dataResult);

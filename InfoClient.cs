@@ -10,7 +10,8 @@ namespace CevaTema {
 	    private const string Address = "127.0.0.1";
 	    private const int PortNo = 1111;
 	    private const int ActivatorPort = 1110;
-        public static void Main(string[] args) {
+	    
+        public static void Main() {
 	        try {
 		        const string name = "MyInfoImpl:InfoImpl";
 		        Console.WriteLine("Sending request to NamingService");
@@ -32,7 +33,7 @@ namespace CevaTema {
 		        //var myInfo = (IInfo) NamingService.getObjectReference("MyInfoImpl:InfoImpl");
 		        IInfo myInfo = new InfoClientProxy(portNumber);
 		        
-		        string data = name+"!Check";
+		        var data = name+"!Check";
 		        msg = new Message("Client",data);
 		        req = new Requestor("Client");
 		        bytes = Marshaller.Marshal(msg);
@@ -40,10 +41,10 @@ namespace CevaTema {
 		        bytes = req.deliver_and_wait_feedback(dest,bytes);
 		        answer = Marshaller.Unmarshal(bytes);
 		        var serverOn = bool.Parse(answer.Data);
-		        var ans ="";
+		        string ans;
 		        if(!serverOn){
 			        ans = "The server is off";
-			        data = name+":"+portNumber+"!TurnOn";
+			        data = name+":"+ portNumber +"!TurnOn";
 			        msg = new Message("Client",data);
 			        req = new Requestor("Client");
 			        bytes = Marshaller.Marshal(msg);
@@ -63,10 +64,21 @@ namespace CevaTema {
 		        var retVal2 = myInfo.get_road_info(2);
 		        Console.WriteLine("Returned value is:");
 		        Console.WriteLine(retVal2);
+		        SendStopMessage();
 	        }
 	        catch (Exception e) {
 		        Console.WriteLine(e.ToString());
 	        }
         }
+
+	    private static void SendStopMessage() {
+		    var msg = new Message("Client", "MyInfoImpl:InfoImpl!TurnOff");
+		    var req = new Requestor("Client");
+		    var bytes = Marshaller.Marshal(msg);
+		    IAddress dest = new Entry(Address, ActivatorPort);
+		    bytes = req.deliver_and_wait_feedback(dest, bytes);
+		    var answer = Marshaller.Unmarshal(bytes);
+		    Console.WriteLine(bool.Parse(answer.Data) ? "Server still on" : "Server is off.");
+	    }
     }
 }

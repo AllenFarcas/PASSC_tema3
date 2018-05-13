@@ -61,6 +61,21 @@ public class NamingService {
 		}
 	}
 
+	public static void sendStopMessage(String name) {
+		Message msg = new Message("Client", name+"!TurnOff");
+		Requestor req = new Requestor("Client");
+		Marshaller m = new Marshaller();
+		byte[] bytes = m.marshal(msg);
+		Address dest = new Entry(address, activatorPort);
+		bytes = req.deliver_and_wait_feedback(dest, bytes);
+		Message answer = m.unmarshal(bytes);
+		if (Boolean.valueOf(answer.data)) {
+			System.out.println("Server still on");
+		} else {
+			System.out.println("Server is off.");
+		}
+	}
+
 	//returns the port number the server was registered at
 	public static void registerMethod(String name, Object obj) {
 		String data = name + ":" + obj.getClass().getTypeName();
@@ -72,7 +87,7 @@ public class NamingService {
 		bytes = req.deliver_and_wait_feedback(dest,bytes);
 		Message answer = m.unmarshal(bytes);
 		boolean wasItThere = Boolean.valueOf(answer.data);
-		String ans ="";
+		String ans;
 		if(wasItThere){
 			ans = "The Activator reached the data.";
 		} else {
@@ -85,7 +100,7 @@ public class NamingService {
 			answer = m.unmarshal(bytes);
 			System.out.println("Registered object " + obj.getClass().getTypeName()+" with name "+name+" at "+answer.data);
 			//se preia rezultatul
-			int portNumber = Integer.parseInt(answer.data);
+			//int portNumber = Integer.parseInt(answer.data);
 		}
 		System.out.println(ans);
 	}
@@ -119,7 +134,7 @@ public class NamingService {
 		bytes = req.deliver_and_wait_feedback(dest,bytes);
 		answer = m.unmarshal(bytes);
 		boolean serverOn = Boolean.valueOf(answer.data);
-		String ans ="";
+		String ans;
 		if(!serverOn){
 			ans = "The server is off";
 			data = name+":"+portNumber+"!TurnOn";
@@ -147,6 +162,7 @@ public class NamingService {
 			Constructor<?> constructor = clazz.getDeclaredConstructor(int.class);
 			if (constructor==null) {
 				System.out.println("Null");
+				throw new Exception("Null constructor!!");
 			}
 			proxy = (ClientProxy) constructor.newInstance(portNumber);
 		} catch (Exception e) {

@@ -24,23 +24,7 @@ class StockMarketClientProxy implements StockMarket,ClientProxy {
 		Message answer = m.unmarshal(bytes);
 		//rezultatul este convertiti la tipul care este returnat de metoda curenta
 		float $result = Float.parseFloat(answer.data);
-		sendStopMessage();
 		return $result;
 	}
 
-	public void sendStopMessage() {
-        Message msg = new Message("Client", "NASDAQ:StockMarketImpl!TurnOff");
-        Requestor req = new Requestor("Client");
-        Marshaller m = new Marshaller();
-        byte[] bytes = m.marshal(msg);
-        Address dest = new Entry("127.0.0.1", 1110);
-        bytes = req.deliver_and_wait_feedback(dest, bytes);
-        Message answer = m.unmarshal(bytes);
-
-        if (Boolean.valueOf(answer.data)) {
-            System.out.println("Server still on");
-        } else {
-            System.out.println("Server is off.");
-        }
-    }
 }
