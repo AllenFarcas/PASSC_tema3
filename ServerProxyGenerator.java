@@ -122,6 +122,7 @@ public class ServerProxyGenerator {
             printWriter.println("\t\tByteStreamTransformer transformer = new ServerTransformer(new "+interfaceName+
                     "MessageServer("+interfaceName.toLowerCase()+"));");
             printWriter.println("\t\twhile(true) {\n\t\t\ttry {");
+            //*
             printWriter.println("\t\t\t\tMessage msg = new Message(\"Client\",\""+name+"!Check\");\n" +
                     "\t\t\t\tRequestor req = new Requestor(\"Client\");\n" +
                     "\t\t\t\tMarshaller m = new Marshaller();\n" +

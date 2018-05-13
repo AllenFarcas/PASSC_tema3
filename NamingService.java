@@ -97,7 +97,9 @@ public class NamingService {
 		Marshaller m = new Marshaller();
 		byte[] bytes = m.marshal(msg);
 		Address dest = new Entry(address,portNo);
+		System.out.println("Getting the message from the Client");
 		bytes = req.deliver_and_wait_feedback(dest, bytes);
+		System.out.println("Message has been received");
 		Message answer = m.unmarshal(bytes);
 		System.out.println("Object reference with name: " + name+" was found at port number: "+answer.data);
 		int portNumber = Integer.parseInt(answer.data);
