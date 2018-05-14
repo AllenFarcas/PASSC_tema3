@@ -18,16 +18,6 @@ class InfoMessageServer extends MessageServer {
 			String [] arrParam = parameters.split(" ", 5);
 			switch (opcode){
 
-				case "get_road_info": {
-					System.out.println("InfoServerProxy: get_road_info method is executing...");
-					java.lang.String $result;
-					int $param_0 = Integer.valueOf(arrParam[0]);
-					$result = info.get_road_info( $param_0);
-					System.out.println("InfoServerProxy: The result is " + $result+"\n\n");
-					Message answer = new Message("InfoServerProxy", $result);
-					return answer;
-				}
-
 				case "get_temp": {
 					System.out.println("InfoServerProxy: get_temp method is executing...");
 					int $result;
@@ -36,6 +26,16 @@ class InfoMessageServer extends MessageServer {
 					String dataResult = String.valueOf($result);
 					System.out.println("InfoServerProxy: result is " + dataResult+"\n\n");
 					Message answer = new Message("InfoServerProxy", dataResult);
+					return answer;
+				}
+
+				case "get_road_info": {
+					System.out.println("InfoServerProxy: get_road_info method is executing...");
+					java.lang.String $result;
+					int $param_0 = Integer.valueOf(arrParam[0]);
+					$result = info.get_road_info( $param_0);
+					System.out.println("InfoServerProxy: The result is " + $result+"\n\n");
+					Message answer = new Message("InfoServerProxy", $result);
 					return answer;
 				}
 			}

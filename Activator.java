@@ -30,7 +30,6 @@ class ActivatorMessageServer extends MessageServer{
             String question = arrOfStr[1];
             String data = arrOfStr[0];
             String ans="";
-            //System.out.println("Activator received a Client");
             if(question.equals("Verify")){
                 System.out.println("Client Verifyies if it contains: "+data);
                 if(activatorTable.containsKey(data)) {
@@ -100,16 +99,7 @@ class ActivatorMessageServer extends MessageServer{
         return answer;
     }
 }
-/*
- *TODO Activator
- *TODO va fi inca un proces in plus care va rula pe fiecare host care poate sa gazduiasca servere
- *TODO discuta cu NamingService
- *TODO cand un client vine la Broker si ii zice "da-mi un StockMarket"
- *TODO se duce la Activator: esti deja activat? daca nu ii zice .activeaza-te()
- *TODO activatorul atunci, aflandu-se pe host-ul unde se afla resursele face instanta via reflection
- *TODO face si instanta de la ServerProxy si ii da drumul sa listen-uie
- *TODO apoi zice ca e ready si ca clientul poate veni sa il contacteze pe ServerProxy
- */
+
 public class Activator {
     public static final String address = "127.0.0.1";
     public static final int portNo = 1110;

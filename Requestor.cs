@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Net.Sockets;
-using System.Text;
 using CevaTema.Commons;
 
 namespace CevaTema.RequestReply {
@@ -15,22 +14,14 @@ namespace CevaTema.RequestReply {
             byte[] buffer = null;
 	        try {
                 _s = new TcpClient(theDest.dest(), theDest.port());
-                Console.WriteLine("Requestor: Socket "+ _s);
 	            _stream = _s.GetStream();
-	            Console.WriteLine("Message to send is :"+Encoding.ASCII.GetString(data));
-	            Console.WriteLine("Message length in bytes is : "+data.Length);
                 _stream.Write(data, 0, data.Length);
                 _stream.Flush();
-	            Console.WriteLine("Message sent succesfully");
                 var val = _stream.ReadByte();
-		        Console.WriteLine("\nValue read: "+val);
                 buffer = new byte[val];
-		        Console.WriteLine("Buffer length is: "+buffer.Length);
                 _stream.Read(buffer, 0, buffer.Length);
 	            _stream.Close();
 	            _s.Close();
-		        Console.WriteLine("Message read succesfully");
-		        Console.WriteLine("Message contains the next message:"+Encoding.ASCII.GetString(buffer));
             }
             catch (SocketException) {
                 Console.WriteLine("IOException in deliver_and_wait_feedback");

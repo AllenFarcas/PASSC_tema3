@@ -70,9 +70,9 @@ public class NamingService {
 		bytes = req.deliver_and_wait_feedback(dest, bytes);
 		Message answer = m.unmarshal(bytes);
 		if (Boolean.valueOf(answer.data)) {
-			System.out.println("Server still on");
+			System.out.println("The server is still on!!!");
 		} else {
-			System.out.println("Server is off.");
+			System.out.println("The server is off");
 		}
 	}
 

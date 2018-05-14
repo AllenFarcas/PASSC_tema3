@@ -38,7 +38,7 @@ class StockMarketClient  {
         try {
             StockMarket market=  (StockMarket) NamingService.getObjectReference("NASDAQ:StockMarketImpl");
             float price = market.get_price("ABC.SRL",3,1234567,false);
-            System.out.println("Price is "+price);
+            System.out.println("get_price(\"ABC.SRL\",3,1234567,false): "+price);
             NamingService.sendStopMessage("NASDAQ:StockMarketImpl");
         }
         catch (Exception e) {

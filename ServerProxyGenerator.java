@@ -133,7 +133,7 @@ public class ServerProxyGenerator {
                     "\t\t\t\tif(Boolean.valueOf(answer.data)) {\n" +
                     "                    rep.receive_transform_and_send_feedback(transformer);\n" +
                     "\t\t\t\t} else {\n" +
-                    "\t\t\t\t\tSystem.out.println(\"Serverul se opreste\");\n" +
+                    "\t\t\t\t\tSystem.out.println(\"The server stops\");\n" +
                     "\t\t\t\t\tbreak;\n" +
                     "\t\t\t\t}");
             printWriter.println("\t\t\t} catch (Exception e) {\n\t\t\t\t//System.out.println(e.getMessage());\n\t\t\t}\n\t\t}\n\t}\n}");
